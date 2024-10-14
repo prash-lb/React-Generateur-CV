@@ -1,6 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import * as Yup from "yup";
+import {random} from "nanoid";
 
 
 function Register() {
@@ -17,66 +18,51 @@ function Register() {
                         <div className="card-body">
                             <Formik
                                 initialValues={{
-                                    name: '',
-                                    email: '',
                                     login: '',
+                                    email: '',
                                     password: '',
-                                    confirmPassword: ''
                                 }}
                                 onSubmit={async (values) => {
-                                    const postForm = await fetch('https://jsonplaceholder.typicode.com/users', {
+                                    console.log("value+"+JSON.stringify(values));
+                                    const postForm = await fetch('http://localhost:3000/users', {
                                         method: 'POST',
-                                        data: values
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify(values)
                                     });
-                                    const data = await postForm.json();
-                                    console.log(data);
-                                    navigate('/login');
+                                    navigate('/');
                                 }}
                                 validationSchema={Yup.object({
-                                    name: Yup.string()
+                                    login: Yup.string()
                                         .min(3, 'Must be at least 3 characters')
                                         .max(15, 'Must be 15 characters or less')
                                         .required('Required'),
                                     email: Yup.string().email('Invalid email address').required('Required'),
-                                    login: Yup.string().max(15, 'Must be 15 characters or less').required('Required'),
                                     password: Yup.string().max(15, 'Must be 15 characters or less').required('Required'),
-                                    confirmPassword: Yup.string()
-                                        .oneOf([Yup.ref('password'), null], 'Passwords must match')
-                                        .required('Required')
+
                                 })}
                             >
                                 {({ isSubmitting }) => (
                                     <Form>
                                         <div className="mb-3">
-                                            <label htmlFor="name" className="form-label">Full Name</label>
-                                            <Field className="form-control" type="text" name="name" />
-                                            <ErrorMessage className="text-danger" name="name" component="div" />
+                                            <label htmlFor="login" className="form-label">Username</label>
+                                            <Field className="form-control" type="text" name="username"/>
+                                            <ErrorMessage className="text-danger" name="username" component="div"/>
                                         </div>
 
                                         <div className="mb-3">
                                             <label htmlFor="email" className="form-label">Email</label>
-                                            <Field className="form-control" type="email" name="email" />
-                                            <ErrorMessage className="text-danger" name="email" component="div" />
+                                            <Field className="form-control" type="email" name="email"/>
+                                            <ErrorMessage className="text-danger" name="email" component="div"/>
                                         </div>
 
-                                        <div className="mb-3">
-                                            <label htmlFor="login" className="form-label">Username</label>
-                                            <Field className="form-control" type="text" name="login" />
-                                            <ErrorMessage className="text-danger" name="login" component="div" />
-                                        </div>
 
                                         <div className="mb-3">
                                             <label htmlFor="password" className="form-label">Password</label>
-                                            <Field className="form-control" type="password" name="password" />
-                                            <ErrorMessage className="text-danger" name="password" component="div" />
+                                            <Field className="form-control" type="password" name="password"/>
+                                            <ErrorMessage className="text-danger" name="password" component="div"/>
                                         </div>
-
-                                        <div className="mb-3">
-                                            <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
-                                            <Field className="form-control" type="password" name="confirmPassword" />
-                                            <ErrorMessage className="text-danger" name="confirmPassword" component="div" />
-                                        </div>
-
                                         <button className="btn btn-primary w-100" type="submit" disabled={isSubmitting}>
                                             Register
                                         </button>

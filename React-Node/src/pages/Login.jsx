@@ -1,11 +1,12 @@
-import React from "react";
+import React, {useContext} from "react";
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from "yup";
 import { useNavigate } from 'react-router-dom';
+import {UserContext} from "../Context/UserContext.jsx";
 
 function Login() {
     const navigate = useNavigate();
-
+    const {login} = useContext(UserContext)
     return (
         <div className="container">
             <div className="row justify-content-center mt-5">
@@ -17,36 +18,70 @@ function Login() {
                         <div className="card-body">
                             <Formik
                                 initialValues={{
-                                    login: '',
+                                    username: '',
                                     password: ''
                                 }}
-                                onSubmit={async (values) => {
+                                onSubmit={async (values,{ setSubmitting, setErrors }) => {
                                     try {
-                                        const res = await fetch('https://jsonplaceholder.typicode.com/users', {
-                                            method: 'POST',
-                                            data: values
+                                        const res = await fetch('http://localhost:3000/users', {
+                                            method: 'GET',
+
                                         });
-                                        if (res.status === 200 || res.status === 201) {
-                                            console.log("Login successful");
+                                        if (res.ok) {  // Vérifie si la requête a réussi (status code 200)
                                             const data = await res.json();
-                                            console.log(data);
-                                            navigate('/', { replace: true });
+                                            for(let index = 0;index < data.length; index++) {
+                                                if(data[index].username === values.username && data[index].password === values.password) {
+                                                    console.log("Login successful");
+                                                    login(data);
+                                                    navigate('/', { replace: true });
+                                                }
+                                            }
+                                            setErrors({ username: "Invalid login or password" });
+                                        } else {
+                                            console.log("Error: Status code", res.status);  // Affiche une erreur si la requête échoue
                                         }
+                                        //methode tempo serveur json  facti
+                                        //Vrai methode
+                                        /* const res = await fetch('http://localhost:3000/users', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify(values),
+                                        });
+                                        console.log("status :"+res.status);
+                                        if (res.ok) { // Vérification que la réponse HTTP est OK (status 200-299)
+                                            const data = await res.json();
+                                            console.log("data "+JSON.stringify(data));
+                                            console.log("data.succes "+data.success);
+                                            // Supposons que 'data' contient les informations de l'utilisateur
+                                            if (data && data.success) {
+                                                console.log("Login successful");
+                                                login(data);
+                                                navigate('/', { replace: true });
+                                            } else {
+                                                setErrors({ login: "Invalid login or password" });
+                                            }
+                                        } else {
+                                            setErrors({ login: "Invalid login or password" });
+                                        }*/
                                     } catch (error) {
                                         console.log("Error: ", error.message);
+                                        setErrors({ login: "An error occurred, please try again later." });
                                     }
+                                    setSubmitting(false);
                                 }}
                                 validationSchema={Yup.object({
-                                    login: Yup.string().required('Login is required'),
+                                    username: Yup.string().required('Login is required'),
                                     password: Yup.string().required('Password is required'),
                                 })}
                             >
                                 {({ isSubmitting }) => (
                                     <Form>
                                         <div className="mb-3">
-                                            <label htmlFor="login" className="form-label">Username</label>
-                                            <Field className="form-control" type="text" name="login" />
-                                            <ErrorMessage className="text-danger" name="login" component="div" />
+                                            <label htmlFor="username" className="form-label">Username</label>
+                                            <Field className="form-control" type="text" name="username" />
+                                            <ErrorMessage className="text-danger" name="username" component="div" />
                                         </div>
 
                                         <div className="mb-3">

@@ -1,0 +1,54 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "johndoe",
+      "email": "john.doe@example.com",
+      "password": "test"
+    },
+    {
+      "id": "2",
+      "username": "janesmith",
+      "email": "jane.smith@example.com",
+      "password": "lala"
+    },
+    {
+      "id": "3",
+      "email": "test@test.com",
+      "username": "test",
+      "password": "test"
+    }
+
+  ],
+  "CV": [
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "description": "Développeur web passionné avec 5 ans d'expérience dans le développement d'applications front-end et back-end.",
+      "education": [
+        {
+          "title": "Master en Informatique",
+          "institution": "Université Paris-Sorbonne",
+          "year": "2018"
+        },
+        {
+          "title": "Certification Full-Stack JavaScript",
+          "institution": "FreeCodeCamp",
+          "year": "2019"
+        }
+      ],
+      "experience": [
+        {
+          "title": "Développeur Web",
+          "company": "Tech Solutions",
+          "duration": "2 ans"
+        },
+        {
+          "title": "Développeur Front-End",
+          "company": "Web Innovators",
+          "duration": "3 ans"
+        }
+      ]
+    }
+  ]
+}

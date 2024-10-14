@@ -17,6 +17,12 @@ function Header() {
                     </Link>
 
                 </li>
+                <li className="nav-item">
+                    <Link to={'/gestionCV'} className={'nav-link'}>
+                        Login
+                    </Link>
+
+                </li>
             </ul>
         </nav>
     );

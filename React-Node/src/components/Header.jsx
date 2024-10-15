@@ -1,27 +1,26 @@
 import { Link } from 'react-router-dom';
+import {useContext} from "react";
+import {UserContext} from "../Context/UserContext.jsx";
 
 function Header() {
-
+    const {logout } = useContext(UserContext);
     return (
         <nav className="navbar navbar-dark bg-dark">
-            <ul className="nav">
+            <ul className="nav w-100">
                 <li className="nav-item">
-                    <Link to={'/register'} className={'nav-link'}>
-                        Register
+                    <Link to={'/dashboard'} className={'nav-link'}>
+                        Dashboard
                     </Link>
                 </li>
                 <li className="nav-item">
-
-                    <Link to={'/login'} className={'nav-link'}>
-                        Login
+                    <Link to={'/MonCV'} className={'nav-link'}>
+                        Mon CV
                     </Link>
-
                 </li>
-                <li className="nav-item">
-                    <Link to={'/gestionCV'} className={'nav-link'}>
-                        Login
+                <li className="nav-item ms-auto">
+                    <Link to={'/'}  onClick={logout} className={'nav-link'} role="button">
+                        Logout
                     </Link>
-
                 </li>
             </ul>
         </nav>

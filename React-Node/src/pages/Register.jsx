@@ -1,7 +1,8 @@
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import * as Yup from "yup";
 import {random} from "nanoid";
+import React from "react";
 
 
 function Register() {
@@ -23,7 +24,7 @@ function Register() {
                                     password: '',
                                 }}
                                 onSubmit={async (values) => {
-                                    console.log("value+"+JSON.stringify(values));
+                                    console.log("value+" + JSON.stringify(values));
                                     const postForm = await fetch('http://localhost:3000/users', {
                                         method: 'POST',
                                         headers: {
@@ -43,7 +44,7 @@ function Register() {
 
                                 })}
                             >
-                                {({ isSubmitting }) => (
+                                {({isSubmitting}) => (
                                     <Form>
                                         <div className="mb-3">
                                             <label htmlFor="login" className="form-label">Username</label>
@@ -69,6 +70,11 @@ function Register() {
                                     </Form>
                                 )}
                             </Formik>
+                            <div className="text-center mt-3">
+                                <p>
+                                    Vous avez déja un compte? <Link to="/login">Connectez-vous</Link>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

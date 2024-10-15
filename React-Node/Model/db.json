@@ -18,10 +18,11 @@
       "username": "test",
       "password": "test"
     }
-
   ],
   "CV": [
     {
+      "email": "john.doe@example.com",
+      "Isvisible": false,
       "firstName": "John",
       "lastName": "Doe",
       "description": "Développeur web passionné avec 5 ans d'expérience dans le développement d'applications front-end et back-end.",
@@ -47,6 +48,13 @@
           "title": "Développeur Front-End",
           "company": "Web Innovators",
           "duration": "3 ans"
+        }
+      ],
+      "commentary": [
+        {
+          "firstName": "test",
+          "lastName": "test",
+          "message": "to long"
         }
       ]
     }

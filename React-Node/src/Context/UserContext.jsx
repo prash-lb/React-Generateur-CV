@@ -7,8 +7,9 @@ export const UserContext = createContext(null);
 const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [cvData, setCvData] = useState(null);
+    const [token, setToken] = useState(null); // Ajout du token
 
-    const login = (logInfos, cvInfos) => {
+    const login = (logInfos, cvInfos,jwtToken) => {
         const userInfo = { ...logInfos };
         const cvInfo = { ...cvInfos };
 
@@ -17,32 +18,35 @@ const UserProvider = ({ children }) => {
 
         setUser(userInfo);
         setCvData(cvInfo);
+        setToken(jwtToken);
         localStorage.setItem('user', JSON.stringify(userInfo));
         localStorage.setItem('cvData', JSON.stringify(cvInfo));
+        localStorage.setItem('token', jwtToken);
+
     };
 
     const logout = () => {
         setUser(null);
         setCvData(null);
-        console.log("info:+"+localStorage.getItem('user'));
+        setToken(null);
         localStorage.removeItem('user');
         localStorage.removeItem('cvData');
-        console.log("info:+"+localStorage.getItem('user'));
-
+        localStorage.removeItem('token');
     };
 
     // Fonction pour récupérer les infos utilisateur (email, username) et CV depuis le localStorage
     const getUserInfos = () => {
-        if (user && cvData) {
-            return { user, cvData };
+        if (user && cvData && token) {
+            return { user, cvData , token };
         } else {
             const storedUser = localStorage.getItem('user');
             const storedCvData = localStorage.getItem('cvData');
-
-            if (storedUser && storedCvData) {
+            const storedToken = localStorage.getItem('token');
+            if (storedUser && storedCvData && storedToken) {
                 setUser(JSON.parse(storedUser));
                 setCvData(JSON.parse(storedCvData));
-                return { user: JSON.parse(storedUser), cvData: JSON.parse(storedCvData) };
+                setToken(storedToken);
+                return { user: JSON.parse(storedUser), cvData: JSON.parse(storedCvData) ,token:storedToken };
             }
         }
     };

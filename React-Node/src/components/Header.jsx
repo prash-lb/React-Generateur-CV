@@ -13,7 +13,7 @@ function Header() {
                     </Link>
                 </li>
                 <li className="nav-item">
-                    <Link to={'/MonCV'} className={'nav-link'}>
+                    <Link to={'/Cv'} className={'nav-link'}>
                         Mon CV
                     </Link>
                 </li>

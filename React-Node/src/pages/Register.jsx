@@ -1,7 +1,6 @@
 import {Link, useNavigate} from "react-router-dom";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import * as Yup from "yup";
-import {random} from "nanoid";
 import React from "react";
 
 
@@ -19,26 +18,24 @@ function Register() {
                         <div className="card-body">
                             <Formik
                                 initialValues={{
-                                    login: '',
                                     email: '',
                                     password: '',
                                 }}
                                 onSubmit={async (values) => {
                                     console.log("value+" + JSON.stringify(values));
-                                    const postForm = await fetch('http://localhost:3000/users', {
+                                    const postForm = await fetch('https://cv-generator-klm2.onrender.com/api/register', {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json'
                                         },
                                         body: JSON.stringify(values)
                                     });
+                                    const data = await postForm.json();
+                                    console.log("register "+JSON.stringify(data));
                                     navigate('/');
                                 }}
                                 validationSchema={Yup.object({
-                                    login: Yup.string()
-                                        .min(3, 'Must be at least 3 characters')
-                                        .max(15, 'Must be 15 characters or less')
-                                        .required('Required'),
+
                                     email: Yup.string().email('Invalid email address').required('Required'),
                                     password: Yup.string().max(15, 'Must be 15 characters or less').required('Required'),
 
@@ -46,12 +43,6 @@ function Register() {
                             >
                                 {({isSubmitting}) => (
                                     <Form>
-                                        <div className="mb-3">
-                                            <label htmlFor="login" className="form-label">Username</label>
-                                            <Field className="form-control" type="text" name="username"/>
-                                            <ErrorMessage className="text-danger" name="username" component="div"/>
-                                        </div>
-
                                         <div className="mb-3">
                                             <label htmlFor="email" className="form-label">Email</label>
                                             <Field className="form-control" type="email" name="email"/>

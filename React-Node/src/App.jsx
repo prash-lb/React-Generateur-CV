@@ -7,6 +7,7 @@ import Login from "./pages/Login.jsx";
 import Welcome from "./pages/Welcome.jsx";
 import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import Cv from "./pages/CV.jsx";
 
 function App() {
     return(
@@ -16,6 +17,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard/>}/>
+            <Route path="/Cv" element={<Cv/>}/>
+
         </Routes>
 
     )

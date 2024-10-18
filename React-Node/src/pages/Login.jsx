@@ -3,7 +3,6 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from "yup";
 import {Link, useNavigate} from 'react-router-dom';
 import {UserContext} from "../Context/UserContext.jsx";
-import log from "eslint-plugin-react/lib/util/log.js";
 
 function Login() {
     const navigate = useNavigate();
@@ -24,37 +23,9 @@ function Login() {
                                 }}
                                 onSubmit={async (values, {setSubmitting, setErrors}) => {
                                     try {
-                                        const res = await fetch('http://localhost:3000/users', {
-                                            method: 'GET',
-                                        });
-                                        if (res.ok) {  // Vérifie si la requête a réussi (status code 200)
-                                            const data = await res.json();
-                                            const user = data.find(user => user.email === values.email && user.password === values.password);
-                                            if(user) {
-                                                console.log("Login success");
-                                                const res2 = await fetch('http://localhost:3000/CV', {
-                                                    method: 'GET',
-                                                });
-
-                                                if(res2.ok) {
-                                                    const cvData = await res2.json();
-                                                    const userCV = cvData.find(cv => cv.email === user.email) || null;
-                                                    login(user, userCV)
-                                                    console.log("User info :"+localStorage.getItem('user') + "\n CVinfo : "+localStorage.getItem('cvData'));
-                                                    navigate('/dashboard', { replace: true });
-                                                }else {
-                                                    console.log("Error: Status code", res2.status);
-                                                }
-                                            }else {
-                                                setErrors({ username: "Invalid login or password" });
-                                            }
-
-                                        } else {
-                                            console.log("Error: Status code", res.status);  // Affiche une erreur si la requête échoue
-                                        }
                                         //methode tempo serveur json  facti
                                         //Vrai methode
-                                        /* const res = await fetch('http://localhost:3000/users', {
+                                        const res = await fetch('https://cv-generator-klm2.onrender.com/api/login', {
                                             method: 'POST',
                                             headers: {
                                                 'Content-Type': 'application/json',
@@ -62,21 +33,16 @@ function Login() {
                                             body: JSON.stringify(values),
                                         });
                                         console.log("status :"+res.status);
-                                        if (res.ok) { // Vérification que la réponse HTTP est OK (status 200-299)
+                                        if (res.status === 201 || res.status === 200) { // Vérification que la réponse HTTP est OK (status 200-299)
                                             const data = await res.json();
-                                            console.log("data "+JSON.stringify(data));
-                                            console.log("data.succes "+data.success);
-                                            // Supposons que 'data' contient les informations de l'utilisateur
-                                            if (data && data.success) {
-                                                console.log("Login successful");
-                                                login(data);
-                                                navigate('/', { replace: true });
-                                            } else {
-                                                setErrors({ login: "Invalid login or password" });
+                                            console.log("Login successful");
+                                            login(data);
+                                            navigate('/dashboard', { replace: true });
                                             }
-                                        } else {
+                                        else {
                                             setErrors({ login: "Invalid login or password" });
-                                        }*/
+                                        }
+
                                     } catch (error) {
                                         console.log("Error: ", error.message);
                                         setErrors({login: "An error occurred, please try again later."});

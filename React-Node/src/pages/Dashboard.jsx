@@ -16,6 +16,7 @@ function Dashboard() {
     const [token,setToken] = useState(null);
     const [cv,setCv] = useState([]);
     const navigate = useNavigate();
+    const [commentaire, setCommentaire] = useState([]);
 
     useEffect(() => {
         const userInfos = getUserInfos();
@@ -62,7 +63,6 @@ function Dashboard() {
     const DeleteCv = async () => {
         console.log("cv : "+JSON.stringify(cv));
         const cvid = cv[0]._id;
-        console.log("cvid : "+cvid);
         try{
             const res = await fetch(`https://cv-generator-klm2.onrender.com/api/cvRouter/${cvid}`,{
                 method: "DELETE",
@@ -113,10 +113,11 @@ function Dashboard() {
         <>
         <Header/>
         <div className="container mt-5">
-            <h1>Votre CV:</h1>
             <div className="row">
+                <h1>Votre CV:</h1>
+
                 {cv.length > 0 ? (
-                    <div className="col-md-4 mb-4" >
+                    <div className="col-md-4 mb-4">
                         <div className="card shadow-sm">
                             <div className="card-body">
                                 <h5 className="card-title">
@@ -141,59 +142,68 @@ function Dashboard() {
                                     ))}
                                 </ul>
                             </div>
+                            <h3>Commentaire :</h3>
+                            {
+
+                            }
+
                             <button className="btn btn-danger" onClick={() => DeleteCv()}>
                                 Supprimer
                             </button>
-                            <button className="btn " onClick={() => navigate("/gestioncv")}>
+                            <button className="btn " onClick={() => navigate("/gestioncv", {state: {cv}})}>
                                 Modifier
                             </button>
+
                         </div>
+
                     </div>
                 ) : (
                     <p>pas de cv </p>
                 )}
             </div>
-            <h2>Les CV : </h2>
-                        <Filter criteria={criteria} setCriteria={setCriteria}/>
-                        <div className="row">
-                            {filteredCV.length > 0 ? (
-                                filteredCV.map((cv, index) => (
-                                    <div className="col-md-4 mb-4" key={index}>
-                                        <div className="card shadow-sm">
-                                            <div className="card-body">
-                                                <h5 className="card-title">
-                                                    {cv.firstName} {cv.lastName}
-                                                </h5>
-                                                <h6>Description :</h6>
-                                                <p className="card-text">{cv.description}</p>
-                                                <h6>Education :</h6>
-                                                <ul>
-                                                    {cv.education.map((edu, eduIndex) => (
-                                                        <li key={eduIndex}>
-                                                            {edu.title} à {edu.institution} en ({edu.year})
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                                <h6>Experience</h6>
-                                                <ul>
-                                                    {cv.experiences.map((exp, expIndex) => (
-                                                        <li key={expIndex}>
-                                                            {exp.role} à {exp.company} pour {exp.year}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <p>No CVs available</p>
-                            )}
 
+        <h2>Les CV : </h2>
+            <Filter criteria={criteria} setCriteria={setCriteria}/>
+            <span></span>
+        <div className="row">
+            {filteredCV.length > 0 ? (
+                filteredCV.map((cv, index) => (
+                    <div className="col-md-4 mb-4" key={index}>
+                        <div className="card shadow-sm">
+                            <div className="card-body">
+                                <h5 className="card-title">
+                                    {cv.firstName} {cv.lastName}
+                                </h5>
+                                <h6>Description :</h6>
+                                <p className="card-text">{cv.description}</p>
+                                <h6>Education :</h6>
+                                <ul>
+                                    {cv.education.map((edu, eduIndex) => (
+                                        <li key={eduIndex}>
+                                            {edu.title} à {edu.institution} en ({edu.year})
+                                        </li>
+                                    ))}
+                                </ul>
+                                <h6>Experience</h6>
+                                <ul>
+                                    {cv.experiences.map((exp, expIndex) => (
+                                        <li key={expIndex}>
+                                            {exp.role} à {exp.company} pour {exp.year}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                    </>
-                    );
-                }
+                ))
+            ) : (
+                <p>No CVs available</p>
+            )}
 
-                export default Dashboard;
+        </div>
+    </div>
+    </>
+    );
+}
+
+export default Dashboard;

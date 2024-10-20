@@ -8,32 +8,6 @@ import Header from "../components/Header.jsx";
 function Cv() {
     const navigate = useNavigate();
     const { getUserInfos } = useContext(UserContext);
-    const id = getUserInfos().user.user.id;
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await fetch(`https://cv-generator-klm2.onrender.com/api/cvRouter?id=${id}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
-                });
-                if (!res.ok) {
-                    console.log("Failed to fetch CVs");
-                    return; // Ajoutez un retour pour éviter l'exécution ultérieure
-                }
-                const data = await res.json();
-                const filteredCv = data.filter(cv => cv.user === id);
-                console.log("cv filter :"+JSON.stringify(filteredCv))
-
-            } catch (err) {
-                console.log(err);
-            }
-        };
-        fetchData();
-    }, [getUserInfos, id]);
-
 
     return (
         <>
@@ -52,7 +26,6 @@ function Cv() {
                         card-body">
                             <Formik
                                 initialValues={{
-                                    email: '',
                                     firstName:  '',
                                     lastName:  '',
                                     description: '',
@@ -64,7 +37,6 @@ function Cv() {
                                     isVisible:  true
                                 }}
                                 validationSchema={Yup.object({
-                                    email: Yup.string().email('Invalid email format').required('Email is required'),
                                     firstName: Yup.string().required('First name is required'),
                                     lastName: Yup.string().required('Last name is required'),
                                     description: Yup.string().required('Description is required'),
@@ -96,14 +68,11 @@ function Cv() {
                                         });
                                         if(res.status === 401) {
                                             const errorData = await res.json();
-                                            console.log("Error message:", errorData.message);
                                             if (errorData.message === "Token has expired, please log in again") {
                                                 navigate("/login");
                                             }
                                         }else if (res.status === 201 || res.status === 200) {
                                             console.log("CV submitted successfully");
-                                            const data = await res.json();
-                                            console.log(data);
                                             navigate('/dashboard')
                                         } else {
                                             console.log("Failed to submit CV");
@@ -116,12 +85,6 @@ function Cv() {
                             >
                                 {({ isSubmitting, values }) => (
                                     <Form>
-                                        <div className="mb-3">
-                                            <label htmlFor="email" className="form-label">Email</label>
-                                            <Field className="form-control" type="email" name="email"/>
-                                            <ErrorMessage className="text-danger" name="email" component="div"/>
-                                        </div>
-
                                         <div className="mb-3">
                                             <label htmlFor="firstName" className="form-label">First Name</label>
                                             <Field className="form-control" type="text" name="firstName"/>

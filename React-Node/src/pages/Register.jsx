@@ -32,7 +32,7 @@ function Register() {
                                     });
                                     const data = await postForm.json();
                                     console.log("register "+JSON.stringify(data));
-                                    navigate('/');
+                                    navigate('/login');
                                 }}
                                 validationSchema={Yup.object({
 
@@ -66,6 +66,7 @@ function Register() {
                                     Vous avez déja un compte? <Link to="/login">Connectez-vous</Link>
                                 </p>
                             </div>
+
                         </div>
                     </div>
                 </div>

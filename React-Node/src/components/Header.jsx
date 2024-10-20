@@ -4,6 +4,8 @@ import {UserContext} from "../Context/UserContext.jsx";
 
 function Header() {
     const {logout } = useContext(UserContext);
+
+
     return (
         <nav className="navbar navbar-dark bg-dark">
             <ul className="nav w-100">
@@ -13,9 +15,9 @@ function Header() {
                     </Link>
                 </li>
                 <li className="nav-item">
-                    <Link to={'/Cv'} className={'nav-link'}>
-                        Mon CV
-                    </Link>
+                        <Link to={'/createcv'} className={'nav-link'}>
+                            Mon CV
+                        </Link>
                 </li>
                 <li className="nav-item ms-auto">
                     <Link to={'/'}  onClick={logout} className={'nav-link'} role="button">

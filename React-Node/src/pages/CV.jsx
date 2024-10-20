@@ -3,33 +3,65 @@ import { useNavigate} from "react-router-dom";
 import {ErrorMessage, Field, FieldArray, Form, Formik} from "formik";
 import * as Yup from "yup";
 import {UserContext} from "../Context/UserContext.jsx";
+import Header from "../components/Header.jsx";
 
 function Cv() {
     const navigate = useNavigate();
-  /*mettre le token */
+    const { getUserInfos } = useContext(UserContext);
+    const id = getUserInfos().user.user.id;
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await fetch(`https://cv-generator-klm2.onrender.com/api/cvRouter?id=${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                });
+                if (!res.ok) {
+                    console.log("Failed to fetch CVs");
+                    return; // Ajoutez un retour pour éviter l'exécution ultérieure
+                }
+                const data = await res.json();
+                const filteredCv = data.filter(cv => cv.user === id);
+                console.log("cv filter :"+JSON.stringify(filteredCv))
+
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        fetchData();
+    }, [getUserInfos, id]);
 
 
     return (
-        <div className="container">
+        <>
+
+        <Header />
+
+    <div className="container">
             <div className="row justify-content-center mt-5">
-                <div className="col-md-8">
-                    <div className="card shadow-lg">
+
+                <div className="col-md-8" >
+                    <div  className="card shadow-lg">
                         <div className="card-header text-center bg-primary text-white">
                             <h3>Remplissez votre CV</h3>
                         </div>
-                        <div className="card-body">
+                        <div className="
+                        card-body">
                             <Formik
                                 initialValues={{
                                     email: '',
-                                    firstName: '',
-                                    lastName: '',
+                                    firstName:  '',
+                                    lastName:  '',
                                     description: '',
                                     education: [
-                                        { title: '', institution: '', year: '' }
+                                         { formation: '', institution: '', year: '' }
                                     ],
-                                    experience: [
-                                        { title: '', company: '', duration: '' }
+                                    experiences: [{ role: '', company: '', year: '' }
                                     ],
+                                    isVisible:  true
                                 }}
                                 validationSchema={Yup.object({
                                     email: Yup.string().email('Invalid email format').required('Email is required'),
@@ -38,18 +70,19 @@ function Cv() {
                                     description: Yup.string().required('Description is required'),
                                     education: Yup.array().of(
                                         Yup.object({
-                                            title: Yup.string().required('Title is required'),
+                                            formation: Yup.string().required('formation is required'),
                                             institution: Yup.string().required('Institution is required'),
                                             year: Yup.string().required('Year is required'),
                                         })
                                     ),
-                                    experience: Yup.array().of(
+                                    experiences: Yup.array().of(
                                         Yup.object({
-                                            title: Yup.string().required('Title is required'),
+                                            role: Yup.string().required('Role is required'),
                                             company: Yup.string().required('Company is required'),
-                                            duration: Yup.string().required('Duration is required'),
+                                            year: Yup.string().required('Year is required'),
                                         })
                                     ),
+                                    isVisible: Yup.boolean().required('Visibility is required'),
                                 })}
                                 onSubmit={async (values, { setSubmitting }) => {
                                     try {
@@ -57,14 +90,19 @@ function Cv() {
                                             method: 'POST',
                                             headers: {
                                                 'Content-Type': 'application/json',
-                                                'Authorization': `Bearer ${token}`
+                                                'authorization': `Bearer ${getUserInfos().user.user.token}`
                                             },
                                             body: JSON.stringify(values),
                                         });
-
-                                        if (res.ok) {
+                                        if(res.status === 401) {
+                                            const errorData = await res.json();
+                                            console.log("Error message:", errorData.message);
+                                            if (errorData.message === "Token has expired, please log in again") {
+                                                navigate("/login");
+                                            }
+                                        }else if (res.status === 201 || res.status === 200) {
                                             console.log("CV submitted successfully");
-                                            const data = await  res.json();
+                                            const data = await res.json();
                                             console.log(data);
                                             navigate('/dashboard')
                                         } else {
@@ -80,53 +118,82 @@ function Cv() {
                                     <Form>
                                         <div className="mb-3">
                                             <label htmlFor="email" className="form-label">Email</label>
-                                            <Field className="form-control" type="email" name="email" />
-                                            <ErrorMessage className="text-danger" name="email" component="div" />
+                                            <Field className="form-control" type="email" name="email"/>
+                                            <ErrorMessage className="text-danger" name="email" component="div"/>
                                         </div>
 
                                         <div className="mb-3">
                                             <label htmlFor="firstName" className="form-label">First Name</label>
-                                            <Field className="form-control" type="text" name="firstName" />
-                                            <ErrorMessage className="text-danger" name="firstName" component="div" />
+                                            <Field className="form-control" type="text" name="firstName"/>
+                                            <ErrorMessage className="text-danger" name="firstName" component="div"/>
                                         </div>
 
                                         <div className="mb-3">
                                             <label htmlFor="lastName" className="form-label">Last Name</label>
-                                            <Field className="form-control" type="text" name="lastName" />
-                                            <ErrorMessage className="text-danger" name="lastName" component="div" />
+                                            <Field className="form-control" type="text" name="lastName"/>
+                                            <ErrorMessage className="text-danger" name="lastName" component="div"/>
                                         </div>
 
                                         <div className="mb-3">
                                             <label htmlFor="description" className="form-label">Description</label>
-                                            <Field as="textarea" className="form-control" name="description" />
-                                            <ErrorMessage className="text-danger" name="description" component="div" />
+                                            <Field as="textarea" className="form-control" name="description"/>
+                                            <ErrorMessage className="text-danger" name="description" component="div"/>
                                         </div>
+                                        <div className="mb-3 form-check form-switch">
+                                            <label htmlFor="isVisible" className="form-check-label">CV Visible ?</label>
+                                            <Field
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id="isVisible"
+                                                name="isVisible"
+                                            />
+                                        </div>
+
 
                                         <div className="mb-3">
                                             <label className="form-label">Education</label>
                                             <FieldArray name="education">
-                                                {({ remove, push }) => (
+                                                {({remove, push}) => (
                                                     <div>
                                                         {values.education.map((_, index) => (
                                                             <div key={index} className="row">
                                                                 <div className="col">
-                                                                    <Field className="form-control" name={`education.${index}.title`} placeholder="Title" />
-                                                                    <ErrorMessage className="text-danger" name={`education.${index}.title`} component="div" />
+                                                                    <Field className="form-control"
+                                                                           name={`education.${index}.formation`}
+                                                                           placeholder="Formation"/>
+                                                                    <ErrorMessage className="text-danger"
+                                                                                  name={`education.${index}.formation`}
+                                                                                  component="div"/>
                                                                 </div>
                                                                 <div className="col">
-                                                                    <Field className="form-control" name={`education.${index}.institution`} placeholder="Institution" />
-                                                                    <ErrorMessage className="text-danger" name={`education.${index}.institution`} component="div" />
+                                                                    <Field className="form-control"
+                                                                           name={`education.${index}.institution`}
+                                                                           placeholder="Institution"/>
+                                                                    <ErrorMessage className="text-danger"
+                                                                                  name={`education.${index}.institution`}
+                                                                                  component="div"/>
                                                                 </div>
                                                                 <div className="col">
-                                                                    <Field className="form-control" name={`education.${index}.year`} placeholder="Year" />
-                                                                    <ErrorMessage className="text-danger" name={`education.${index}.year`} component="div" />
+                                                                    <Field className="form-control"
+                                                                           name={`education.${index}.year`}
+                                                                           placeholder="Year"/>
+                                                                    <ErrorMessage className="text-danger"
+                                                                                  name={`education.${index}.year`}
+                                                                                  component="div"/>
                                                                 </div>
                                                                 <div className="col-1">
-                                                                    <button type="button" className="btn btn-danger" onClick={() => remove(index)}>X</button>
+                                                                    <button type="button" className="btn btn-danger"
+                                                                            onClick={() => remove(index)}>X
+                                                                    </button>
                                                                 </div>
                                                             </div>
                                                         ))}
-                                                        <button type="button" className="btn btn-secondary mt-3" onClick={() => push({ title: '', institution: '', year: '' })}>
+                                                        <button type="button" className="btn btn-secondary mt-3"
+                                                                onClick={() => push({
+                                                                    formation: '',
+                                                                    institution: '',
+                                                                    year: ''
+                                                                })}>
                                                             Ajouter une éducation
                                                         </button>
                                                     </div>
@@ -135,30 +202,49 @@ function Cv() {
                                         </div>
 
                                         <div className="mb-3">
-                                            <label className="form-label">Experience</label>
-                                            <FieldArray name="experience">
-                                                {({ remove, push }) => (
+                                            <label className="form-label">Experiences</label>
+                                            <FieldArray name="experiences">
+                                                {({remove, push}) => (
                                                     <div>
-                                                        {values.experience.map((_, index) => (
-                                                            <div key={index} className="row">
+                                                        {values.experiences.map((_, index2) => (
+                                                            <div key={index2} className="row">
                                                                 <div className="col">
-                                                                    <Field className="form-control" name={`experience.${index}.title`} placeholder="Title" />
-                                                                    <ErrorMessage className="text-danger" name={`experience.${index}.title`} component="div" />
+                                                                    <Field className="form-control"
+                                                                           name={`experiences.${index2}.role`}
+                                                                           placeholder="Role"/>
+                                                                    <ErrorMessage className="text-danger"
+                                                                                  name={`experiences.${index2}.role`}
+                                                                                  component="div"/>
                                                                 </div>
                                                                 <div className="col">
-                                                                    <Field className="form-control" name={`experience.${index}.company`} placeholder="Company" />
-                                                                    <ErrorMessage className="text-danger" name={`experience.${index}.company`} component="div" />
+                                                                    <Field className="form-control"
+                                                                           name={`experiences.${index2}.company`}
+                                                                           placeholder="Company"/>
+                                                                    <ErrorMessage className="text-danger"
+                                                                                  name={`experiences.${index2}.company`}
+                                                                                  component="div"/>
                                                                 </div>
                                                                 <div className="col">
-                                                                    <Field className="form-control" name={`experience.${index}.duration`} placeholder="Duration" />
-                                                                    <ErrorMessage className="text-danger" name={`experience.${index}.duration`} component="div" />
+                                                                    <Field className="form-control"
+                                                                           name={`experiences.${index2}.year`}
+                                                                           placeholder="Year"/>
+                                                                    <ErrorMessage className="text-danger"
+                                                                                  name={`experiences.${index2}.year`}
+                                                                                  component="div"/>
                                                                 </div>
                                                                 <div className="col-1">
-                                                                    <button type="button" className="btn btn-danger" onClick={() => remove(index)}>X</button>
+                                                                    <button type="button" className="btn btn-danger"
+                                                                            onClick={() => remove(index2)}>X
+                                                                    </button>
                                                                 </div>
                                                             </div>
                                                         ))}
-                                                        <button type="button" className="btn btn-secondary mt-3" onClick={() => push({ title: '', company: '', duration: '' })}>
+                                                        <button type="button" className="btn btn-secondary mt-3"
+                                                                onClick={() => push({
+                                                                    role: '',
+                                                                    company: '',
+                                                                    year: ''
+                                                                })}>
                                                             Ajouter une expérience
                                                         </button>
                                                     </div>
@@ -176,7 +262,8 @@ function Cv() {
                     </div>
                 </div>
             </div>
-        </div>
+    </div>
+        </>
     );
 }
 

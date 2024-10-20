@@ -8,7 +8,7 @@ import Header from "../components/Header.jsx";
 /**
  * Composant pour remplir un CV avec un formulaire.
  * @component
- */
+ */y
 function Cv() {
     const navigate = useNavigate();
     const { getUserInfos } = useContext(UserContext);
@@ -199,7 +199,7 @@ function Cv() {
                                                                 </div>
                                                                 <div className="col-1">
                                                                     <button type="button" className="btn btn-danger"
-                                                                            onClick={() => remove(index2)}>
+                                                                            onClick={() => remove(index2)}>x
                                                                     </button>
                                                                 </div>
                                                             </div>

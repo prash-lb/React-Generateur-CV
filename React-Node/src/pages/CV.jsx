@@ -5,16 +5,18 @@ import * as Yup from "yup";
 import {UserContext} from "../Context/UserContext.jsx";
 import Header from "../components/Header.jsx";
 
+/**
+ * Composant pour remplir un CV avec un formulaire.
+ * @component
+ */
 function Cv() {
     const navigate = useNavigate();
     const { getUserInfos } = useContext(UserContext);
 
     return (
         <>
-
         <Header />
-
-    <div className="container">
+        <div className="container">
             <div className="row justify-content-center mt-5">
 
                 <div className="col-md-8" >
@@ -197,7 +199,7 @@ function Cv() {
                                                                 </div>
                                                                 <div className="col-1">
                                                                     <button type="button" className="btn btn-danger"
-                                                                            onClick={() => remove(index2)}>X
+                                                                            onClick={() => remove(index2)}>
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -225,7 +227,7 @@ function Cv() {
                     </div>
                 </div>
             </div>
-    </div>
+        </div>
         </>
     );
 }

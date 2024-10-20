@@ -4,7 +4,10 @@ import * as Yup from "yup";
 // eslint-disable-next-line no-unused-vars
 import React, {useState} from "react";
 
-
+/**
+ * Composant pour s'inscrire
+ * @component
+ */
 function Register() {
     const navigate = useNavigate();
     const [error, setError] = useState(false);
@@ -37,7 +40,6 @@ function Register() {
                                             setError(true);
                                         }else if(res.status === 200 || res.status === 201) {
                                             console.log("Register submitted successfully");
-
                                             navigate('/login');
                                         }else {
                                             console.log("Failed to submit Register");

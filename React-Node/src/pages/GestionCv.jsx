@@ -5,7 +5,10 @@ import {ErrorMessage, Field, FieldArray, Form, Formik} from "formik";
 import * as Yup from "yup";
 import {UserContext} from "../Context/UserContext.jsx";
 import Header from "../components/Header.jsx";
-
+/**
+ * Composant page de gestion du cv pour changer les champ
+ * @component
+ */
 function GestionCv() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -16,8 +19,7 @@ function GestionCv() {
     return (
         <>
         <Header />
-
-    <div className="container">
+        <div className="container">
             <div className="row  justify-content-center mt-5">
                 <div className="col-md-8">
                     <div className="card shadow-lg">
@@ -56,7 +58,6 @@ function GestionCv() {
                                 })}
                                 onSubmit={async (values, { setSubmitting }) => {
                                     const cvid = cvdata._id;
-
                                     try {
                                         const res = await fetch(`https://cv-generator-klm2.onrender.com/api/cvRouter/${cvid}`, {
                                             method: 'PUT',

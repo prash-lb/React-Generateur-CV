@@ -2,6 +2,10 @@ import React, {createContext, useState} from 'react';
 import PropTypes from 'prop-types';
 
 // Création du contexte utilisateur
+/**
+ * Contexte utilisateur pour gérer l'authentification et les informations d'utilisateur.
+ * @type {React.Context}
+ */
 export const UserContext = createContext(null);
 
 const UserProvider = ({ children }) => {

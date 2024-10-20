@@ -1,6 +1,10 @@
 import React from 'react';
 import {useNavigate} from "react-router-dom";
 
+/**
+ * Composant page d'acceuil
+ * @component
+ */
 function Welcome() {
     const navigate = useNavigate();
     const goToLogin = () => {

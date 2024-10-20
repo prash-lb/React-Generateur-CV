@@ -4,33 +4,37 @@ import Filter from "../components/Filter.jsx";
 import {UserContext} from "../Context/UserContext.jsx";
 import {useNavigate} from "react-router-dom";
 
-
+/**
+ * Composant page acceuil
+ * @component
+ */
 function Dashboard() {
     const [cvs,setCvs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [criteria, setCriteria] = useState('');
     const [filteredCV, setFilteredCV] = useState([]);
-
     const { getUserInfos } = useContext(UserContext);
     const [token,setToken] = useState(null);
     const [cv,setCv] = useState([]);
     const navigate = useNavigate();
-    const [commentaire, setCommentaire] = useState([]);
+    const [commentaireCV, setCommentaireCV] = useState([]);
 
+    //pour avoir le token
     useEffect(() => {
         const userInfos = getUserInfos();
-        console.log("tokken :"+userInfos.user.user.token);
         if (!userInfos.user.user.token){
             setToken(null);
             navigate("/login");
-
         }
         else{
             setToken(userInfos.user.user.token);
         }
     }, [ navigate, getUserInfos]);
 
+    /**
+     * Fonction pour recupere cv list global de tous les user et celui du user connecté au serveur.
+     */
     useEffect(() => {
         const fetchData = async () => {
             try{
@@ -43,25 +47,55 @@ function Dashboard() {
                     console.log("Failled to fetch CVs");
                 }
                 const data = await res.json();
-
                 setCvs(data);
                 setCv(data.filter((cv) => (cv.user ===  getUserInfos().user.user.id)));
                 setLoading(false);
+
+                if(cv.length > 0){
+                    await fetchCom(cv[0]._id);
+                }
+
             }catch (err){
                 setError(err.message);
                 setLoading(false);
             }
         };
+        //pour chopper les commentaire du cv user
+        /**
+         * Fonction pour recupere les commentaire du cv user
+         */
+        const fetchCom = async (cvid) => {
+            try {
+                const res = await fetch(`https://cv-generator-klm2.onrender.com/api/cvRouter/${cvid}/recommendations`, {
+                    method: 'GET',
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+                if(!res.ok) {
+                    console.log("Failled to fetch CVs");
+                }else{
+                    const dataComm = await res.json();
+                    setCommentaireCV(dataComm);
+                }
+            }catch (err){
+                console.log(err);
+            }
+        };
         fetchData();
+
     },[cv, cvs, getUserInfos])
 
+    //Pour filtrer la liste de cv
     useEffect(() => {
         setFilteredCV(cvs.filter((cv) => (cv.firstName.toLowerCase().includes(criteria.toLowerCase()) || cv.lastName.toLowerCase().includes(criteria.toLowerCase())) && cv.isVisible));
     },[criteria,cvs]);
 
-
+    //delete le cv user
+    /**
+     * Fonction pour supprimer le cv du serveur
+     */
     const DeleteCv = async () => {
-        console.log("cv : "+JSON.stringify(cv));
         const cvid = cv[0]._id;
         try{
             const res = await fetch(`https://cv-generator-klm2.onrender.com/api/cvRouter/${cvid}`,{
@@ -91,20 +125,22 @@ function Dashboard() {
             <>
                 <Header/>
                 <div className="container mt-5">
-                    <h2 >Les CV : </h2>
-                </div>
+                    <h2>Les CV : </h2>
                     <p>Loading CVs...</p>
+
+                </div>
             </>
         )
     }
-    if(error){
+    if (error){
         return (
             <>
                 <Header/>
                 <div className="container mt-5">
-                    <h2 >Les CV : </h2>
+                    <h2>Les CV : </h2>
+                    <p>{error}</p>
+
                 </div>
-                <p>{error}</p>
             </>
         )
     }
@@ -129,7 +165,7 @@ function Dashboard() {
                                 <ul>
                                     {cv[0].education.map((edu, eduIndex) => (
                                         <li key={eduIndex}>
-                                            {edu.title} à {edu.institution} en ({edu.year})
+                                            {edu.formation} à {edu.institution} en {edu.year}
                                         </li>
                                     ))}
                                 </ul>
@@ -137,21 +173,32 @@ function Dashboard() {
                                 <ul>
                                     {cv[0].experiences.map((exp, expIndex) => (
                                         <li key={expIndex}>
-                                            {exp.role} à {exp.company} pour {exp.year}
+                                            {exp.role} à {exp.company} pour {exp.year} ans
                                         </li>
                                     ))}
                                 </ul>
                             </div>
-                            <h3>Commentaire :</h3>
+
+                            <h6>Commentaire :</h6>
                             {
-
+                                commentaireCV.length > 0 ? (
+                                    <ul>
+                                        {commentaireCV.map((com, Index) => (
+                                            <li key={Index}>
+                                                - {com.content}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ): (
+                                    <p>Pas de commentaire</p>
+                                )
                             }
-
                             <button className="btn btn-danger" onClick={() => DeleteCv()}>
                                 Supprimer
                             </button>
-                            <button className="btn " onClick={() => navigate("/gestioncv", {state: {cv}})}>
-                                Modifier
+                            <button className="btn btn-primary mt-3"
+                                    onClick={() => navigate("/gestioncv", {state: {cv}})}>
+                            Modifier
                             </button>
 
                         </div>
@@ -162,7 +209,7 @@ function Dashboard() {
                 )}
             </div>
 
-        <h2>Les CV : </h2>
+            <h2>Les CV : </h2>
             <Filter criteria={criteria} setCriteria={setCriteria}/>
             <span></span>
         <div className="row">
@@ -192,6 +239,10 @@ function Dashboard() {
                                         </li>
                                     ))}
                                 </ul>
+                                <button className="btn btn-primary mt-2 "
+                                        onClick={() => navigate("/commentarypage", {state: {cv}})}>
+                                    Voir détail
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -201,8 +252,8 @@ function Dashboard() {
             )}
 
         </div>
-    </div>
-    </>
+        </div>
+        </>
     );
 }
 

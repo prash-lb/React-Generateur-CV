@@ -3,7 +3,10 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from "yup";
 import {Link, useNavigate} from 'react-router-dom';
 import {UserContext} from "../Context/UserContext.jsx";
-
+/**
+ * Composant pour se connecter
+ * @component
+ */
 function Login() {
     const navigate = useNavigate();
     const {login} = useContext(UserContext);

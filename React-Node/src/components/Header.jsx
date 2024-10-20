@@ -2,10 +2,11 @@ import { Link } from 'react-router-dom';
 import {useContext} from "react";
 import {UserContext} from "../Context/UserContext.jsx";
 
+/**
+ * Juste le Header de l'app
+ * */
 function Header() {
     const {logout } = useContext(UserContext);
-
-
     return (
         <nav className="navbar navbar-dark bg-dark">
             <ul className="nav w-100">

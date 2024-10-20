@@ -8,6 +8,7 @@ import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Cv from "./pages/CV.jsx";
 import GestionCv from "./pages/GestionCv.jsx";
+import CommentaryCV from "./pages/CommentaryCV.jsx";
 
 function App() {
     return(
@@ -19,6 +20,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard/>}/>
             <Route path="/createcv" element={<Cv/>}/>
             <Route path="/gestioncv" element={<GestionCv/>}/>
+            <Route path="/commentarypage" element={<CommentaryCV/>}/>
+
 
 
         </Routes>

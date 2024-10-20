@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import { useNavigate} from "react-router-dom";
 import {ErrorMessage, Field, FieldArray, Form, Formik} from "formik";
 import * as Yup from "yup";
@@ -8,7 +8,7 @@ import Header from "../components/Header.jsx";
 /**
  * Composant pour remplir un CV avec un formulaire.
  * @component
- */y
+ */
 function Cv() {
     const navigate = useNavigate();
     const { getUserInfos } = useContext(UserContext);
@@ -199,7 +199,7 @@ function Cv() {
                                                                 </div>
                                                                 <div className="col-1">
                                                                     <button type="button" className="btn btn-danger"
-                                                                            onClick={() => remove(index2)}>x
+                                                                            onClick={() => remove(index2)}>X
                                                                     </button>
                                                                 </div>
                                                             </div>
